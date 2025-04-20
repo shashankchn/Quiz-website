@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTML Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      max-width: 600px;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      margin-top: 50px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .question {
+      font-size: 1.2em;
+      margin-bottom: 15px;
+    }
+    .options label {
+      display: block;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+    .btn {
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background: #0056b3;
+    }
+    .timer {
+      font-weight: bold;
+      color: red;
+      margin-bottom: 20px;
+    }
+    #welcome {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="welcome">
+    <h1>Welcome to the HTML Quiz!</h1>
+    <button class="btn" onclick="startQuiz()">Start Quiz</button>
+  </div>
+
+  <div class="container" id="quiz" style="display:none">
+    <div class="timer" id="timer">Time Left: 15s</div>
+    <div class="question" id="question"></div>
+    <div class="options" id="options"></div>
+    <button class="btn" onclick="nextQuestion()">Next</button>
+  </div>
+
+  <div class="container" id="result" style="display:none">
+    <h2>Quiz Completed!</h2>
+    <p id="score"></p>
+    <button class="btn" onclick="restartQuiz()">Restart Quiz</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What does HTML stand for?",
+        options: ["Hyper Trainer Marking Language", "Hyper Text Markup Language", "Hyper Text Marketing Language", "Hyper Tool Multi Language"],
+        answer: 1
+      },
+      {
+        question: "Which tag is used to create a hyperlink in HTML?",
+        options: ["link tag", "href tag", "a tag", "url tag"],
+        answer: 2
+      },
+      {
+        question: "Which element is used to define a paragraph in HTML?",
+        options: ["P tag", "para tag", "paragraph tag", "text tag"],
+        answer: 0
+      },
+      {
+        question: "Which tag is used for inserting an image in HTML?",
+        options: ["image tag", "img tag", "src tag", "pic tag"],
+        answer: 1
+      },
+      {
+        question: "How do you create a numbered list in HTML?",
+        options: ["ul tag", "ol tag", "li tag", "dl tag"],
+        answer: 1
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let timer;
+    let timeLeft = 15;
+
+    function startQuiz() {
+      document.getElementById('welcome').style.display = 'none';
+      document.getElementById('result').style.display = 'none';
+      document.getElementById('quiz').style.display = 'block';
+      currentQuestion = 0;
+      score = 0;
+      showQuestion();
+    }
+
+    function showQuestion() {
+      clearInterval(timer);
+      timeLeft = 15;
+      document.getElementById('timer').textContent = `Time Left: ${timeLeft}s`;
+      timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').textContent = `Time Left: ${timeLeft}s`;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          nextQuestion();
+        }
+      }, 1000);
+
+      const q = questions[currentQuestion];
+      document.getElementById('question').textContent = q.question;
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = '';
+      q.options.forEach((opt, index) => {
+        optionsDiv.innerHTML += `<label><input type="radio" name="option" value="${index}" /> ${opt}</label>`;
+      });
+    }
+
+    function nextQuestion() {
+      clearInterval(timer);
+      const selected = document.querySelector('input[name="option"]:checked');
+      if (selected && parseInt(selected.value) === questions[currentQuestion].answer) {
+        score++;
+      }
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      document.getElementById('quiz').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('score').textContent = `You scored ${score} out of ${questions.length}`;
+    }
+
+    function restartQuiz() {
+      startQuiz();
+    }
+  </script>
+</body>
+</html>
